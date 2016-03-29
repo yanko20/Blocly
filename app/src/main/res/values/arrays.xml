@@ -20,4 +20,25 @@
         <item>RobotoCondensed-LightItalic.ttf</item>
         <item>RobotoCondensed-Regular.ttf</item>
     </string-array>
+
+    <integer-array name="roboto_font_file_values">
+        <item>32</item>
+        <item>40</item>
+        <item>16</item>
+        <item>24</item>
+        <item>8</item>
+        <item>4</item>
+        <item>12</item>
+        <item>64</item>
+        <item>72</item>
+        <item>0</item>
+        <item>2</item>
+        <item>10</item>
+        <item>17</item>
+        <item>25</item>
+        <item>9</item>
+        <item>5</item>
+        <item>13</item>
+        <item>1</item>
+    </integer-array>
 </resources>

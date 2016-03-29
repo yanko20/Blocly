@@ -20,8 +20,8 @@
         android:layout_marginTop="8dp"
         android:text="New York Times"/>
 
-    <io.bloc.android.blocly.ui.widget.RobotoTextView
-        style="@style/Body1"
+    <io.bloc.android.blocly.ui.widget.CustomRobotoTextView
+        style="@style/CustomBody"
         android:id="@+id/tv_rss_item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

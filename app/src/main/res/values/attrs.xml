@@ -21,5 +21,14 @@
             <enum name="CondensedLightItalic" value="16"/>
             <enum name="CondensedRegular" value="17"/>
         </attr>
+        <attr name="condensed" format="boolean"/>
+        <attr name="robotoStyle" format="integer">
+            <flag name="thin" value="2"/>
+            <flag name="light" value="4"/>
+            <flag name="italic" value="8"/>
+            <flag name="bold" value="16"/>
+            <flag name="black" value="32"/>
+            <flag name="medium" value="64"/>
+        </attr>
     </declare-styleable>
 </resources>
