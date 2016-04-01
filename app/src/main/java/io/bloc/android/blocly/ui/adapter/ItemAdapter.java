@@ -82,11 +82,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
 
         @Override
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-            Log.e(TAG, "onLoadingFailed: " + failReason.toString() + "for URL: " + imageUri);
+            Log.e(TAG, "onLoadingFailed: " + failReason.toString() + "for URL: " + imageUri, failReason.getCause());
         }
 
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            Log.v(TAG, "onLoadingComplete");
             if(imageUri.equals(imageURL)){
                 headerImage.setImageBitmap(loadedImage);
                 headerImage.setVisibility(View.VISIBLE);
