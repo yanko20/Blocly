@@ -25,8 +25,8 @@ public class RssItem {
         this.rssFeedId = rssFeedId;
         this.datePublished = datePublished;
         this.read = read;
-        this.favorite = favorite;
-        this.archived = archived;
+        this.setFavorite(favorite);
+        this.setArchived(archived);
     }
 
     public String getGuid() {
@@ -65,4 +65,11 @@ public class RssItem {
         return archived;
     }
 
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
 }

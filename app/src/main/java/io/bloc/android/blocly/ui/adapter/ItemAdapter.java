@@ -1,5 +1,6 @@
 package io.bloc.android.blocly.ui.adapter;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -83,6 +84,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             }else{
                 headerWrapper.setVisibility(View.GONE);
             }
+            archiveCheckbox.setChecked(rssItem.isArchived());
+            favoriteCheckbox.setChecked(rssItem.isFavorite());
         }
 
         @Override
@@ -116,6 +119,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             Log.v(TAG,"Checked changed to: " + isChecked);
+            // setFavorite and setArchived.......
+            Resources resources = buttonView.getResources();
+            String resourceName = resources.getResourceName(buttonView.getId());
+            String archived = resources.getResourceName(R.id.cb_rss_item_check_mark);
+            String favorite = resources.getResourceName(R.id.cb_rss_item_favorite_star);
+            if(resourceName.equals(archived)){
+                rssItem.setArchived(isChecked);
+            }else if(resourceName.equals(favorite)){
+                rssItem.setFavorite(isChecked);
+            }
         }
     }
 
