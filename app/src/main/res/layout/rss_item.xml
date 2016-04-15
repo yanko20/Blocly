@@ -94,10 +94,10 @@
             android:id="@+id/tv_rss_item_content_full"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <io.bloc.android.blocly.ui.widget.RobotoTextView
-            style="@style/Button"
-            android:id="@+id/tv_rss_item_visit_site"
+        <io.bloc.android.blocly.ui.widget.CustomButton
+            style="@style/CustomButton"
             android:text="visit site"
+            android:id="@+id/custom_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

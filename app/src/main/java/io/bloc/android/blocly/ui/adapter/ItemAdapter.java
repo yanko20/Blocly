@@ -21,6 +21,7 @@ import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.DataSource;
 import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
+import io.bloc.android.blocly.ui.widget.CustomButton;
 
 /**
  * Created by yankomizorov on 3/22/16.
@@ -58,7 +59,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         CheckBox favoriteCheckbox;
         View expandedContentWrapper;
         TextView expandedContent;
-        TextView visitSite;
+        CustomButton visitSiteCustomButton;
         RssItem rssItem;
 
         public ItemAdapterViewHolder(View itemView){
@@ -72,9 +73,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             favoriteCheckbox = (CheckBox) itemView.findViewById(R.id.cb_rss_item_favorite_star);
             expandedContentWrapper = itemView.findViewById(R.id.ll_rss_item_expanded_content_wrapper);
             expandedContent = (TextView) expandedContentWrapper.findViewById(R.id.tv_rss_item_content_full);
-            visitSite = (TextView) expandedContentWrapper.findViewById(R.id.tv_rss_item_visit_site);
+            visitSiteCustomButton = (CustomButton) expandedContentWrapper.findViewById(R.id.custom_button);
             itemView.setOnClickListener(this);
-            visitSite.setOnClickListener(this);
+            visitSiteCustomButton.setOnClickListener(this);
             archiveCheckbox.setOnCheckedChangeListener(this);
             favoriteCheckbox.setOnCheckedChangeListener(this);
         }

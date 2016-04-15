@@ -11,4 +11,10 @@
         <!-- Window Background -->
         <item name="android:windowBackground">@color/windowBackground</item>
     </style>
+    <style name="CustomButton">
+        <item name="android:textSize">14sp</item>
+        <item name="robotoFont">Medium</item>
+        <item name="android:textColor">@android:color/holo_blue_dark</item>
+        <item name="android:background">@drawable/ripple_custom_btn</item>
+    </style>
 </resources>
