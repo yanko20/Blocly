@@ -88,8 +88,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             content.setText(rssItem.getDescription());
             expandedContent.setText(rssItem.getDescription());
             if(rssItem.getImageUrl() != null){
-                headerWrapper.setVisibility(View.VISIBLE);
-                headerImage.setVisibility(View.INVISIBLE);
+                headerWrapper.setVisibility(View.GONE);
+                //headerWrapper.getLayoutParams().height = 0;
                 ImageLoader.getInstance().loadImage(rssItem.getImageUrl(), this);
             }else{
                 headerWrapper.setVisibility(View.GONE);
@@ -104,6 +104,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         @Override
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             Log.e(TAG, "onLoadingFailed: " + failReason.toString() + "for URL: " + imageUri);
+            headerWrapper.setVisibility(View.GONE);
         }
 
         @Override
@@ -111,6 +112,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             if(imageUri.equals(rssItem.getImageUrl())){
                 headerImage.setImageBitmap(loadedImage);
                 headerImage.setVisibility(View.VISIBLE);
+                animateHeader();
             }
         }
 
@@ -181,6 +183,24 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                 }
             });
             contentExpanded = expand;
+        }
+
+        private void animateHeader(){
+            int startingHeight = 0;
+            headerWrapper.setVisibility(View.VISIBLE);
+            headerWrapper.setAlpha(0);
+            headerWrapper.measure(View.MeasureSpec.makeMeasureSpec(headerWrapper.getWidth(), View.MeasureSpec.EXACTLY),
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            int finalHeight = headerWrapper.getMeasuredHeight();
+            startAnimator(startingHeight, finalHeight, new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float animatedFraction = valueAnimator.getAnimatedFraction();
+                    headerWrapper.setAlpha(animatedFraction);
+                    headerWrapper.getLayoutParams().height = (Integer) valueAnimator.getAnimatedValue();
+                    headerWrapper.requestLayout();
+                }
+            });
         }
 
         private void startAnimator(int start, int end, ValueAnimator.AnimatorUpdateListener animatorUpdateListener){
