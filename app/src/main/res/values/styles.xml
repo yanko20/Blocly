@@ -1,8 +1,13 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Window Background -->
         <item name="android:windowBackground">@color/windowBackground</item>
+        <!-- DrawerArrowStyle -->
+        <item name="drawerArrowStyle">@style/DrawerArrow</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="Headline">
@@ -33,5 +38,9 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="robotoFont">Medium</item>
+    </style>
+
+    <style name="DrawerArrow" parent="Base.Widget.AppCompat.DrawerArrowToggle">
+        <item name="android:color">@color/actionBarItems</item>
     </style>
 </resources>
