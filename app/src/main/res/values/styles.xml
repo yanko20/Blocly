@@ -42,5 +42,8 @@
 
     <style name="DrawerArrow" parent="Base.Widget.AppCompat.DrawerArrowToggle">
         <item name="android:color">@color/actionBarItems</item>
+        <item name="barLength">24dp</item>
+        <item name="gapBetweenBars">7dp</item>
+        <item name="drawableSize">36dp</item>
     </style>
 </resources>
