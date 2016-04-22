@@ -6,16 +6,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import io.bloc.android.blocly.BloclyApplication;
+import io.bloc.android.blocly.Delegate;
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
-
 /**
  * Created by yankomizorov on 4/21/16.
  */
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.ViewHolder>{
+
+    private Delegate delegate;
 
     public enum NavigationOption{
         NAVIGATION_OPTION_INBOX,
@@ -45,6 +46,10 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     @Override
     public int getItemCount() {
         return NavigationOption.values().length + BloclyApplication.getSharedDataSource().getFeeds().size();
+    }
+
+    public void setDelegate(Delegate delegate){
+        this.delegate = delegate;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
@@ -101,7 +106,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(v.getContext(), "Nothing... yet!", Toast.LENGTH_SHORT).show();
+            delegate.performAction();
         }
     }
 }

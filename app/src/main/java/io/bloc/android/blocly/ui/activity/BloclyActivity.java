@@ -10,7 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import io.bloc.android.blocly.Delegate;
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.ui.adapter.ItemAdapter;
 import io.bloc.android.blocly.ui.adapter.NavigationDrawerAdapter;
@@ -46,6 +48,15 @@ public class BloclyActivity extends AppCompatActivity{
         navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
         navigationRecyclerView.setAdapter(navigationDrawerAdapter);
+
+        navigationDrawerAdapter.setDelegate(new Delegate(){
+            @Override
+            public void performAction() {
+                Toast.makeText(
+                        BloclyActivity.this.getApplicationContext(),
+                        "Nothing... yet!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
