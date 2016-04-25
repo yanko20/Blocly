@@ -12,11 +12,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+
+import java.lang.ref.WeakReference;
 
 import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.R;
@@ -30,6 +31,25 @@ import io.bloc.android.blocly.api.model.RssItem;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterViewHolder> {
 
     private static String TAG = ItemAdapter.class.getSimpleName();
+    WeakReference<ItemAdapterDelegate> delegate;
+
+    public static interface ItemAdapterDelegate{
+        public void didExpandItem(RssItem item);
+        public void didContractItem(RssItem item);
+        public void didWishToVisitSite();
+        public void didFavoriteItem(RssItem item);
+        public void didUnfavoriteItem(RssItem item);
+        public void didArchiveItem(RssItem item);
+        public void didUnarchiveItem(RssItem item);
+    }
+
+    public ItemAdapterDelegate getDelegate(){
+        return delegate == null ? null : delegate.get();
+    }
+
+    public void setDelegate(ItemAdapterDelegate delegate){
+        this.delegate = new WeakReference<ItemAdapterDelegate>(delegate);
+    }
 
     @Override
     public ItemAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -124,13 +144,27 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             if(view == itemView){
                 animateContent(!contentExpanded);
             } else {
-                Toast.makeText(view.getContext(), "Visit " + rssItem.getUrl(), Toast.LENGTH_SHORT).show();
+                getDelegate().didWishToVisitSite();
             }
         }
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             Log.v(TAG, "Checked changed to: " + isChecked);
+            if(buttonView.getId() == favoriteCheckbox.getId()){
+                if(isChecked){
+                    getDelegate().didFavoriteItem(rssItem);
+                }else{
+                    getDelegate().didUnfavoriteItem(rssItem);
+                }
+            } else if(buttonView.getId() == archiveCheckbox.getId()){
+                if(isChecked){
+                    getDelegate().didArchiveItem(rssItem);
+                }else{
+                    getDelegate().didUnarchiveItem(rssItem);
+                }
+            }
+
         }
 
         private void animateContent(final boolean expand) {
@@ -142,6 +176,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             int startingHeight = expandedContentWrapper.getMeasuredHeight();
             int finalHeight = content.getMeasuredHeight();
             if (expand) {
+                getDelegate().didExpandItem(rssItem);
                 // #3
                 startingHeight = finalHeight;
                 expandedContentWrapper.setAlpha(0f);
@@ -153,6 +188,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                 );
                 finalHeight = expandedContentWrapper.getMeasuredHeight();
             } else {
+                getDelegate().didContractItem(rssItem);
                 content.setVisibility(View.VISIBLE);
             }
             startAnimator(startingHeight, finalHeight, new ValueAnimator.AnimatorUpdateListener() {

@@ -14,13 +14,14 @@ import android.widget.Toast;
 
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
+import io.bloc.android.blocly.api.model.RssItem;
 import io.bloc.android.blocly.ui.adapter.ItemAdapter;
 import io.bloc.android.blocly.ui.adapter.NavigationDrawerAdapter;
 
 /**
  * Created by yankomizorov on 3/15/16.
  */
-public class BloclyActivity extends AppCompatActivity implements NavigationDrawerAdapter.NavigationDraawerAdapterDelegate{
+public class BloclyActivity extends AppCompatActivity implements NavigationDrawerAdapter.NavigationDraawerAdapterDelegate, ItemAdapter.ItemAdapterDelegate{
 
     private ItemAdapter adapter;
     private ActionBarDrawerToggle drawerToggle;
@@ -34,6 +35,7 @@ public class BloclyActivity extends AppCompatActivity implements NavigationDrawe
         Toolbar toolbar = (Toolbar) findViewById(R.id.tb_activity_blocly);
         setSupportActionBar(toolbar);
         adapter = new ItemAdapter();
+        adapter.setDelegate(this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -89,5 +91,40 @@ public class BloclyActivity extends AppCompatActivity implements NavigationDrawe
                 "Show RSS item from  " + rssFeed.getTitle(),
                 Toast.LENGTH_SHORT)
                 .show();
+    }
+
+    @Override
+    public void didExpandItem(RssItem item) {
+        Toast.makeText(this, "Expanded item: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didContractItem(RssItem item) {
+        Toast.makeText(this, "Contracted item: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didWishToVisitSite() {
+        Toast.makeText(this, "Wish to visit site", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didFavoriteItem(RssItem item) {
+        Toast.makeText(this, "Favorite item: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didUnfavoriteItem(RssItem item) {
+        Toast.makeText(this, "Unfavorite item: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didArchiveItem(RssItem item) {
+        Toast.makeText(this, "Archived item: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didUnarchiveItem(RssItem item) {
+        Toast.makeText(this, "Unarchived item: " + item.getTitle(), Toast.LENGTH_SHORT).show();
     }
 }
