@@ -145,7 +145,15 @@ public class BloclyActivity extends AppCompatActivity implements NavigationDrawe
         if(drawerToggle.onOptionsItemSelected(item)){
             return true;
         }
-        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        if(item.getItemId() == R.id.action_search){
+            Toast.makeText(this, "Searching is fun!", Toast.LENGTH_SHORT).show();
+        } else if(item.getItemId() == R.id.action_share){
+            Toast.makeText(this, "I love to share!", Toast.LENGTH_SHORT).show();
+        } else if(item.getItemId() == R.id.action_refresh){
+            Toast.makeText(this, "Refresh it up…", Toast.LENGTH_SHORT).show();
+        } else if(item.getItemId() == R.id.action_mark_as_read){
+            Toast.makeText(this, "Mark 'em all!", Toast.LENGTH_SHORT).show();
+        }
         return super.onOptionsItemSelected(item);
     }
 
