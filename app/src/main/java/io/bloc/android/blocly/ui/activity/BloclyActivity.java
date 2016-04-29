@@ -39,7 +39,7 @@ public class BloclyActivity extends AppCompatActivity
     private NavigationDrawerAdapter navigationDrawerAdapter;
     private Menu menu;
     private View overflowButton;
-
+    private RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class BloclyActivity extends AppCompatActivity
         itemAdapter = new ItemAdapter();
         itemAdapter.setDataSource(this);
         itemAdapter.setDelegate(this);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(itemAdapter);
@@ -193,17 +193,17 @@ public class BloclyActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClicked(ItemAdapter itemAdapter, RssItem rssItem) {
+    public void onItemClicked(ItemAdapter itemAdapter, RssItem rssItem, View itemView) {
         int positionToExpand = -1;
         int positionToContract = -1;
 
         if(itemAdapter.getExpandedItem() != null){
            positionToContract = BloclyApplication.getSharedDataSource().getItems().indexOf(itemAdapter.getExpandedItem());
         }
-
         if(itemAdapter.getExpandedItem() != rssItem){
             positionToExpand = BloclyApplication.getSharedDataSource().getItems().indexOf(rssItem);
             itemAdapter.setExpandedItem(rssItem);
+            recyclerView.smoothScrollBy(0, (int)itemView.getY());
         }else{
             itemAdapter.setExpandedItem(null);
         }
