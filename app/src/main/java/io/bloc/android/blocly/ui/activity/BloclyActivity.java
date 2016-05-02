@@ -33,6 +33,7 @@ public class BloclyActivity extends AppCompatActivity
         ItemAdapter.DataSource,
         ItemAdapter.Delegate{
 
+    private RecyclerView recyclerView;
     private ItemAdapter itemAdapter;
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
@@ -49,7 +50,7 @@ public class BloclyActivity extends AppCompatActivity
         itemAdapter = new ItemAdapter();
         itemAdapter.setDataSource(this);
         itemAdapter.setDelegate(this);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(itemAdapter);
@@ -198,7 +199,11 @@ public class BloclyActivity extends AppCompatActivity
         int positionToContract = -1;
 
         if(itemAdapter.getExpandedItem() != null){
-           positionToContract = BloclyApplication.getSharedDataSource().getItems().indexOf(itemAdapter.getExpandedItem());
+            positionToContract = BloclyApplication.getSharedDataSource().getItems().indexOf(itemAdapter.getExpandedItem());
+            View viewToContract = recyclerView.getLayoutManager().findViewByPosition(positionToContract);
+            if(viewToContract == null){
+                positionToContract = -1;
+            }
         }
 
         if(itemAdapter.getExpandedItem() != rssItem){
@@ -212,7 +217,15 @@ public class BloclyActivity extends AppCompatActivity
         }
         if(positionToExpand > -1){
             itemAdapter.notifyItemChanged(positionToExpand);
+        } else {
+            return;
+        }
+        int lessToScroll = 0;
+        if(positionToContract > -1 && positionToContract < positionToExpand){
+            lessToScroll = itemAdapter.getExpandedItemHeight() - itemAdapter.getCollapsedItemHeight();
         }
 
+        View viewToExpand = recyclerView.getLayoutManager().findViewByPosition(positionToExpand);
+        recyclerView.smoothScrollBy(0, viewToExpand.getTop() - lessToScroll);
     }
 }
