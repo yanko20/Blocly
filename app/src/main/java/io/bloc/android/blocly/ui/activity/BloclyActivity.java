@@ -1,7 +1,9 @@
 package io.bloc.android.blocly.ui.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -134,6 +136,7 @@ public class BloclyActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.blocly, menu);
         this.menu = menu;
+        enableSharing(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -194,7 +197,7 @@ public class BloclyActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClicked(ItemAdapter itemAdapter, RssItem rssItem) {
+    public void onItemClicked(ItemAdapter itemAdapter, final RssItem rssItem) {
         int positionToExpand = -1;
         int positionToContract = -1;
 
@@ -214,18 +217,39 @@ public class BloclyActivity extends AppCompatActivity
         }
         if(positionToContract > -1){
             itemAdapter.notifyItemChanged(positionToContract);
+            enableSharing(false);
         }
-        if(positionToExpand > -1){
+        if(positionToExpand > -1) {
             itemAdapter.notifyItemChanged(positionToExpand);
+            enableSharing(true);
+            menu.findItem(R.id.action_share).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    shareRss(rssItem);
+                    return true;
+                }
+            });
+
         } else {
             return;
         }
         int lessToScroll = 0;
-        if(positionToContract > -1 && positionToContract < positionToExpand){
+        if (positionToContract > -1 && positionToContract < positionToExpand){
             lessToScroll = itemAdapter.getExpandedItemHeight() - itemAdapter.getCollapsedItemHeight();
         }
-
         View viewToExpand = recyclerView.getLayoutManager().findViewByPosition(positionToExpand);
         recyclerView.smoothScrollBy(0, viewToExpand.getTop() - lessToScroll);
+    }
+
+    private void enableSharing(boolean enabled){
+        menu.findItem(R.id.action_share).setEnabled(enabled);
+        menu.findItem(R.id.action_share).setVisible(enabled);
+    }
+
+    private void shareRss(RssItem item){
+        Intent viewUrlIntent = new Intent();
+        viewUrlIntent.setAction(Intent.ACTION_VIEW);
+        viewUrlIntent.setData(Uri.parse(item.getUrl()));
+        startActivity(viewUrlIntent);
     }
 }
