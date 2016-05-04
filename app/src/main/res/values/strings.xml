@@ -9,4 +9,5 @@
     <string name="menu_search">Search</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_mark_as_read">Mark as read</string>
+    <string name="share_chooser_title">Share with…</string>
 </resources>
