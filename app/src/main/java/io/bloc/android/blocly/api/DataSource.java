@@ -1,10 +1,11 @@
 package io.bloc.android.blocly.api;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import io.bloc.android.blocly.BloclyApplication;
-import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
 import io.bloc.android.blocly.api.network.GetFeedsNetworkRequest;
@@ -20,13 +21,44 @@ public class DataSource {
     public DataSource(){
         feeds = new ArrayList<RssFeed>();
         items = new ArrayList<RssItem>();
-        createFakeData();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                new GetFeedsNetworkRequest("http://feeds.feedburner.com/androidcentral?format=xml").performRequest();
+                List<GetFeedsNetworkRequest.FeedResponse> feedResponses =
+                        new GetFeedsNetworkRequest("http://feeds.feedburner.com/androidcentral?format=xml")
+                                .performRequest();
+                for(GetFeedsNetworkRequest.FeedResponse feedResponse : feedResponses){
+                    feeds.add(new RssFeed(
+                            feedResponse.channelTitle,
+                            feedResponse.channelDescription,
+                            feedResponse.channelURL, feedResponse.channelFeedUrl));
+                    for(GetFeedsNetworkRequest.ItemResponse itemResponse : feedResponse.channelItems){
+                        items.add(new RssItem(
+                                itemResponse.itemGUID,
+                                itemResponse.itemTitle,
+                                itemResponse.itemDescription,
+                                itemResponse.itemURL,
+                                itemResponse.itemEnclosureURL,
+                                0,
+                                getDate(itemResponse.itemPubDate),
+                                false,
+                                false
+                        ));
+                    }
+                }
             }
         }).start();
+    }
+
+    private long getDate(String dateString){
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy H:mm:ss z");
+        try {
+            Date date = sdf.parse(dateString);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public List<RssFeed> getFeeds() {
@@ -35,20 +67,6 @@ public class DataSource {
 
     public List<RssItem> getItems() {
         return items;
-    }
-
-    void createFakeData() {
-        feeds.add(new RssFeed("My Favorite Feed",
-                "This feed is just incredible, I can't even begin to tell you…",
-                "http://favoritefeed.net", "http://feeds.feedburner.com/favorite_feed?format=xml"));
-        for (int i = 0; i < 10; i++) {
-            items.add(new RssItem(String.valueOf(i),
-                    BloclyApplication.getSharedInstance().getString(R.string.placeholder_headline) + " " + i,
-                    BloclyApplication.getSharedInstance().getString(R.string.placeholder_content),
-                    "http://favoritefeed.net?story_id=an-incredible-news-story",
-                    "http://g-ecx.images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg",
-                    0, System.currentTimeMillis(), false, false));
-        }
     }
 
 }
