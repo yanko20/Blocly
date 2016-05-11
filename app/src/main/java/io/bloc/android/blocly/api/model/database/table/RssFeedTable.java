@@ -5,10 +5,10 @@ package io.bloc.android.blocly.api.model.database.table;
  */
 public class RssFeedTable extends Table{
 
-    private static final String COLUMN_LINK = "link";
-    private static final String COLUMN_TITLE = "title";
-    private static final String COLUMN_DESCRIPTION = "description";
-    private static final String COLUMN_FEED_URL = "feed_url";
+    public static final String COLUMN_LINK = "link";
+    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_FEED_URL = "feed_url";
 
 
     @Override
