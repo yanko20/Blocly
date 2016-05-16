@@ -1,6 +1,8 @@
 package io.bloc.android.blocly.api;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -76,6 +78,15 @@ public class DataSource {
                             .setPubDate(itemPubDate)
                             .setRSSFeed(androidCentralFeedId)
                             .insert(writableDatabase);
+                }
+
+                // check database
+                Cursor c = writableDatabase
+                        .rawQuery("SELECT * FROM rss_items ORDER BY pub_date DESC LIMIT 10", null);
+                while(c.moveToNext()){
+                    String title = c.getString(c.getColumnIndex("title"));
+                    String pub_date = c.getString(c.getColumnIndex("pub_date"));
+                    Log.v("bloclydb", "date: " + pub_date + " title: " + title);
                 }
             }
         }).start();
