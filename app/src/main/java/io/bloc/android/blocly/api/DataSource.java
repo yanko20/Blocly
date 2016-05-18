@@ -3,6 +3,7 @@ package io.bloc.android.blocly.api;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -94,6 +95,32 @@ public class DataSource {
                 items.addAll(newRSSItems);
                 feeds.add(androidCentralRSSFeed);
                 BloclyApplication.getSharedInstance().sendBroadcast(new Intent(ACTION_DOWNLOAD_COMPLETED));
+
+                Cursor c = rssItemTable.getAllItemsFromRssFeed(databaseOpenHelper.getReadableDatabase(), androidCentralFeedId);
+                while(c.moveToNext()){
+                    String title = RssItemTable.getTitle(c);
+                    Log.v(DataSource.class.getName(), "getAllItemsFromRssFeed: " + title);
+                }
+
+                c = rssItemTable.getAllArchivedItems(databaseOpenHelper.getReadableDatabase());
+                while(c.moveToNext()){
+                    String title = RssItemTable.getTitle(c);
+                    Log.v(DataSource.class.getName(), "getAllArchivedItems: " + title);
+                }
+
+                c = rssItemTable.getAllArchivedItemsFromRssFeed(databaseOpenHelper.getReadableDatabase(), androidCentralFeedId);
+                while(c.moveToNext()){
+                    String title = RssItemTable.getTitle(c);
+                    Log.v(DataSource.class.getName(), "getAllArchivedItemsFromRssFeed: " + title);
+                }
+
+                c = RssItemTable.getAllArchivedItemsFromRssFeedWithOffsetAndLimit(databaseOpenHelper.getReadableDatabase(), androidCentralFeedId, 5, 5);
+                while(c.moveToNext()){
+                    String title = RssItemTable.getTitle(c);
+                    Log.v(DataSource.class.getName(), "getAllArchivedItemsFromRssFeedWithOffsetAndLimit: " + title);
+                }
+
+
             }
         }).start();
     }

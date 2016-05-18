@@ -125,6 +125,41 @@ public class RssItemTable extends Table {
                 + COLUMN_MIME_TYPE + " TEXT,"
                 + COLUMN_RSS_FEED + " INTEGER," // identifies rss feed to which each item belongs
                 + COLUMN_FAVORITE + " INTEGER DEFAULT 0," // initialized to 0 and interpreted as false
-                + COLUMN_ARCHIVED + " INTEGER DEFAULT 0)";
+                + COLUMN_ARCHIVED + " INTEGER DEFAULT 1)";
     }
+
+    private static String getAllItemsQuery(){
+        return "SELECT * FROM " + NAME;
+    }
+
+    public static Cursor getAllArchivedItems(SQLiteDatabase readonlyDatabase){
+        String query =
+                getAllItemsQuery() + " WHERE " + COLUMN_ARCHIVED + " = " + "1";
+        return readonlyDatabase.rawQuery(query, null);
+    }
+
+    public static Cursor getAllArchivedItemsFromRssFeed(SQLiteDatabase readonlyDatabase, long feedId){
+        String query =
+                getAllItemsQuery() + " WHERE " + COLUMN_ARCHIVED + " = " + "1 AND " + COLUMN_RSS_FEED + " = " + String.valueOf(feedId);
+        return readonlyDatabase.rawQuery(query, null);
+    }
+
+    public static Cursor getAllItemsFromRssFeed(SQLiteDatabase readonlyDatabase, long feedId){
+        String query =
+                getAllItemsQuery() + " WHERE " + COLUMN_RSS_FEED + " = " + String.valueOf(feedId);
+        return readonlyDatabase.rawQuery(query, null);
+    }
+
+    // same query applies for favorites as for archived
+
+    public static Cursor getAllArchivedItemsFromRssFeedWithOffsetAndLimit(SQLiteDatabase readonlyDatabase, long feedId, int offset, int limit){
+        String query =
+                getAllItemsQuery()
+                        + " WHERE " + COLUMN_RSS_FEED + " = " + String.valueOf(feedId)
+                        + " LIMIT " + String.valueOf(limit)
+                        + " OFFSET " + String.valueOf(offset);
+        return readonlyDatabase.rawQuery(query, null);
+    }
+
+
 }
