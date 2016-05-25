@@ -95,6 +95,14 @@ public class RssItemTable extends Table {
         return getBoolean(cursor, COLUMN_ARCHIVED);
     }
 
+    public static Cursor fetchItemsForFeed(SQLiteDatabase readonlyDatabase, long feedRowId){
+        //Cursor c = readonlyDatabase.rawQuery("select * from rss_items", null);
+        //String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
+        //Log.v("xxxxx", "item title: " + title);
+        return readonlyDatabase.query(true, NAME, null, COLUMN_RSS_FEED + " = ?", new String[]{String.valueOf(feedRowId)},
+                null, null, COLUMN_PUB_DATE + " DESC", null);
+    }
+
     private static final String COLUMN_LINK = "link";
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_DESCRIPTION = "description";

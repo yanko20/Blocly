@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
-import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.model.RssFeed;
 
@@ -24,6 +24,10 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         NAVIGATION_OPTION_ARCHIVED
     }
 
+    public static interface NavigationDrawerAdapterDataSource{
+        public List<RssFeed> getFeeds(NavigationDrawerAdapter adapter);
+    }
+
     public static interface NavigationDraawerAdapterDelegate{
         public void didSelectNavigationOption(NavigationDrawerAdapter adapter, NavigationOption navigationOption);
         public void didSelectFeed(NavigationDrawerAdapter adapter, RssFeed rssFeed);
@@ -36,6 +40,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     }
 
     WeakReference<NavigationDraawerAdapterDelegate> delegate;
+    WeakReference<NavigationDrawerAdapterDataSource> dataSource;
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -44,7 +49,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
         if(position >= NavigationOption.values().length){
             int feedPosition = position - NavigationOption.values().length;
-            rssFeed = BloclyApplication.getSharedDataSource().getFeeds().get(feedPosition);
+            rssFeed = getDataSource().getFeeds(this).get(feedPosition);
         }
         holder.update(position, rssFeed);
 
@@ -52,7 +57,10 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     @Override
     public int getItemCount() {
-        return NavigationOption.values().length + BloclyApplication.getSharedDataSource().getFeeds().size();
+        if(getDataSource() == null){
+            return NavigationOption.values().length;
+        }
+        return NavigationOption.values().length + getDataSource().getFeeds(this).size();
     }
 
     public NavigationDraawerAdapterDelegate getDelegate(){
@@ -61,6 +69,14 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     public void setDelegate(NavigationDraawerAdapterDelegate delegate){
         this.delegate = new WeakReference<NavigationDraawerAdapterDelegate>(delegate);
+    }
+
+    public NavigationDrawerAdapterDataSource getDataSource(){
+        return dataSource == null ? null : dataSource.get();
+    }
+
+    public void setDataSource(NavigationDrawerAdapterDataSource dataSource){
+        this.dataSource = new WeakReference<NavigationDrawerAdapterDataSource>(dataSource);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
