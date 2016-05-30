@@ -35,4 +35,4 @@ captures/
 # IntelliJ Stuff
 .idea/
 
-app/app.imi
+app/app.iml
