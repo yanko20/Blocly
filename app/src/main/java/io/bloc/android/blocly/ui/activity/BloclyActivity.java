@@ -50,6 +50,7 @@ public class BloclyActivity extends AppCompatActivity
     private View overflowButton;
     private List<RssFeed> allFeeds = new ArrayList<>();
     private List<RssItem> currentItems = new ArrayList<>();
+    boolean isRefreshed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,8 @@ public class BloclyActivity extends AppCompatActivity
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
             @Override
             public void onRefresh() {
-                BloclyApplication.getSharedDataSource().fetchNewFeed("http://feeds.feedburner.com/androidcentral?format=xml",
+
+                BloclyApplication.getSharedDataSource().fetchFeed(isRefreshed, "http://feeds.feedburner.com/androidcentral?format=xml",
                         new DataSource.Callback<RssFeed>() {
                             @Override
                             public void onSuccess(RssFeed rssFeed) {
@@ -98,6 +100,7 @@ public class BloclyActivity extends AppCompatActivity
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         });
+                isRefreshed = true;
             }
         });
 
