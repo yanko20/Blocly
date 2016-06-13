@@ -34,4 +34,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:recyclerview-v7:24.0.0-alpha1'
     compile files('libs/universal-image-loader-1.9.5.jar')
+    compile files('libs/jsoup-1.8.1.jar')
 }
