@@ -96,11 +96,19 @@ public class RssItemTable extends Table {
     }
 
     public static Cursor fetchItemsForFeed(SQLiteDatabase readonlyDatabase, long feedRowId){
-        //Cursor c = readonlyDatabase.rawQuery("select * from rss_items", null);
-        //String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-        //Log.v("xxxxx", "item title: " + title);
         return readonlyDatabase.query(true, NAME, null, COLUMN_RSS_FEED + " = ?", new String[]{String.valueOf(feedRowId)},
                 null, null, COLUMN_PUB_DATE + " DESC", null);
+    }
+
+    public static boolean hasItem(SQLiteDatabase readonlyDatabase, String guId){
+        Cursor query = readonlyDatabase.query(
+                true,
+                NAME, new String[]{COLUMN_GUID}, COLUMN_GUID + " = ?",
+                new String[]{guId},
+                null, null, null, null);
+        boolean hasItem = query.moveToFirst();
+        query.close();
+        return hasItem;
     }
 
     private static final String COLUMN_LINK = "link";
