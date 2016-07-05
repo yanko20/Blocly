@@ -1,13 +1,14 @@
 package io.bloc.android.blocly.ui.activity;
 
 import android.animation.ValueAnimator;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,7 +29,6 @@ import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.api.DataSource;
 import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
-import io.bloc.android.blocly.ui.adapter.ItemAdapter;
 import io.bloc.android.blocly.ui.adapter.NavigationDrawerAdapter;
 import io.bloc.android.blocly.ui.fragment.RssItemListFragment;
 
@@ -213,11 +213,43 @@ public class BloclyActivity extends AppCompatActivity
     @Override
     public void didSelectFeed(NavigationDrawerAdapter adapter, RssFeed rssFeed) {
         drawerLayout.closeDrawers();
-        Toast.makeText(
-                this,
-                "Show RSS item from  " + rssFeed.getTitle(),
-                Toast.LENGTH_SHORT)
-                .show();
+
+        Fragment existingFragment = getFragmentManager().findFragmentByTag(rssFeed.getTitle());
+
+        if(existingFragment != null && selectedFeed){
+            Toast.makeText(
+                    this,
+                    "Already selected  " + rssFeed.getTitle(),
+                    Toast.LENGTH_SHORT)
+                    .show();
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .show(existingFragment)
+                    .commit();
+            return;
+        }
+
+        final RssItemListFragment fragment = RssItemListFragment.fragmentForRssFeed(rssFeed);
+        fragment.fetchNewItemsForFeed(rssFeed);
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.fl_activity_blocly, fragment, rssFeed.getTitle())
+                .addToBackStack(rssFeed.getTitle())
+                .commit();
+        selectedFeed = true;
+    }
+
+    private boolean selectedFeed = false;
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        }
+        else {
+            getFragmentManager().popBackStack();
+        }
     }
 
     private void animateShareItem(final boolean enabled){

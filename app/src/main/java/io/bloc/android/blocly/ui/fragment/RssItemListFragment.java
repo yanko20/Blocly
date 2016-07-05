@@ -40,6 +40,28 @@ public class RssItemListFragment extends Fragment implements ItemAdapter.DataSou
         return rssItemListFragment;
     }
 
+    public void fetchNewItemsForFeed(RssFeed rssFeed){
+        currentFeed = rssFeed;
+        BloclyApplication.getSharedDataSource().fetchNewItemsForFeed(currentFeed,
+                new DataSource.Callback<List<RssItem>>() {
+                    @Override
+                    public void onSuccess(List<RssItem> rssItems) {
+                        if (getActivity() == null) {
+                            return;
+                        }
+                        // #8
+                        if (!rssItems.isEmpty()) {
+                            currentItems.addAll(0, rssItems);
+                            itemAdapter.notifyItemRangeInserted(0, rssItems.size());
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                    }
+                });
+    }
+
     public static interface Delegate{
         public void onItemExpanded(RssItemListFragment rssItemListFragment, RssItem rssItem);
         public void onItemContracted(RssItemListFragment rssItemListFragment, RssItem rssItem);
