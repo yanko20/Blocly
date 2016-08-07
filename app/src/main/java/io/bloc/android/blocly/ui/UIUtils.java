@@ -1,4 +1,4 @@
-package io.bloc.android.blocly.api;
+package io.bloc.android.blocly.ui;
 
 import java.util.Random;
 

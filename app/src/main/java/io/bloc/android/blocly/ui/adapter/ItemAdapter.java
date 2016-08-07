@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.bloc.android.blocly.R;
-import io.bloc.android.blocly.api.UIUtils;
+import io.bloc.android.blocly.ui.UIUtils;
 import io.bloc.android.blocly.api.model.RssFeed;
 import io.bloc.android.blocly.api.model.RssItem;
 
