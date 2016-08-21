@@ -167,7 +167,18 @@ public class BloclyActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.blocly, menu);
         this.menu = menu;
-        animateShareItem(expandedItem != null);
+        int width = getResources().getConfiguration().screenHeightDp;
+
+        Configuration configuration = this.getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp;
+
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE &&
+                screenWidthDp >= 960){
+            menu.removeItem(R.id.action_share);
+        }else{
+            animateShareItem(expandedItem != null);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -228,7 +239,7 @@ public class BloclyActivity extends AppCompatActivity
     private void animateShareItem(final boolean enabled){
         MenuItem shareItem = menu.findItem(R.id.action_share);
         if(shareItem.isEnabled() == enabled){
-            return;
+            //return;
         }
         shareItem.setEnabled(enabled);
         final Drawable shareIcon = shareItem.getIcon();
