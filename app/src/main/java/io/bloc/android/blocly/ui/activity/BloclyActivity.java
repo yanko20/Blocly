@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -53,6 +54,7 @@ public class BloclyActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Debug.startMethodTracing("BloclyActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blocly);
         onTablet = findViewById(R.id.fl_activity_blocly_right_pane) != null;
@@ -169,6 +171,12 @@ public class BloclyActivity extends AppCompatActivity
         this.menu = menu;
         animateShareItem(expandedItem != null);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Debug.stopMethodTracing();
     }
 
     @Override
