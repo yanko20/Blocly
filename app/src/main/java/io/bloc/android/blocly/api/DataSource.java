@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -30,8 +31,9 @@ import io.bloc.android.blocly.api.network.NetworkRequest;
  */
 public class DataSource {
 
-    public static interface Callback<Result>{
+    public static interface Callback<Result> {
         public void onSuccess(Result result);
+
         public void onError(String errorMessage);
     }
 
@@ -39,6 +41,8 @@ public class DataSource {
     private RssFeedTable rssFeedTable;
     private RssItemTable rssItemTable;
     private ExecutorService executorService;
+    private static String TAG = "yanstag";
+    private String testGuid = null;
 
     public DataSource(Context context) {
         rssFeedTable = new RssFeedTable();
@@ -72,12 +76,39 @@ public class DataSource {
         }
     }
 
-    public void fetchNewFeed(final String feedURL, final Callback<RssFeed> callback){
+    public void updateFavorite(int favorite, String guid) {
+        testGuid = guid;
+        // before db update
+        SQLiteDatabase writableDatabase = databaseOpenHelper.getWritableDatabase();
+        String query = "SELECT * FROM rss_items WHERE guid='" + guid + "'";
+        Cursor c = writableDatabase.rawQuery(query, new String[]{});
+        c.moveToNext();
+        int index = c.getColumnIndex("is_favorite");
+        Log.v(TAG, "is_favorite = " + c.getString(index));
+        c.close();
+
+        // update db
+        Log.v(TAG, "Updating database..");
+        writableDatabase.execSQL("UPDATE rss_items SET is_favorite=" + favorite + " WHERE guid='" + guid + "'");
+
+        // after db update
+        c = writableDatabase.rawQuery(query, new String[]{});
+        c.moveToNext();
+        Log.v(TAG, "is_favorite = " + c.getString(index));
+        c.close();
+    }
+
+    public String getTestGuid(){
+        return testGuid;
+    }
+
+    public void fetchNewFeed(final String feedURL, final Callback<RssFeed> callback) {
         final Handler callbackThreadHandler = new Handler();
         submitTask(new Runnable() {
             @Override
             public void run() {
-                Cursor existingFeedCursor = RssFeedTable.fetchFeedWithURL(databaseOpenHelper.getReadableDatabase(), feedURL);
+                Cursor existingFeedCursor = RssFeedTable.fetchFeedWithURL(databaseOpenHelper.getReadableDatabase(),
+                        feedURL);
                 if (existingFeedCursor.moveToFirst()) {
                     final RssFeed fetchedFeed = feedFromCursor(existingFeedCursor);
                     existingFeedCursor.close();
@@ -120,7 +151,7 @@ public class DataSource {
         });
     }
 
-    public void fetchItemsForFeed(final RssFeed rssFeed, final Callback<List<RssItem>> callback){
+    public void fetchItemsForFeed(final RssFeed rssFeed, final Callback<List<RssItem>> callback) {
         final Handler callbackThreadHandler = new Handler();
         submitTask(new Runnable() {
             @Override
@@ -129,10 +160,10 @@ public class DataSource {
                 Cursor cursor = RssItemTable.fetchItemsForFeed(
                         databaseOpenHelper.getReadableDatabase(),
                         rssFeed.getRowId());
-                if(cursor.moveToFirst()){
-                    do{
+                if (cursor.moveToFirst()) {
+                    do {
                         resultList.add(itemFromCursor(cursor));
-                    }while(cursor.moveToNext());
+                    } while (cursor.moveToNext());
                     cursor.close();
                 }
                 callbackThreadHandler.post(new Runnable() {
@@ -145,7 +176,7 @@ public class DataSource {
         });
     }
 
-    public void fetchNewItemsForFeed(final RssFeed rssFeed, final Callback<List<RssItem>> callback){
+    public void fetchNewItemsForFeed(final RssFeed rssFeed, final Callback<List<RssItem>> callback) {
         final Handler callbackThreadHandler = new Handler();
         submitTask(new Runnable() {
             @Override
@@ -163,7 +194,8 @@ public class DataSource {
                         continue;
                     }
                     long newItemRowId = insertResponseToDatabase(rssFeed.getRowId(), itemResponse);
-                    Cursor newItemCursor = rssItemTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newItemRowId);
+                    Cursor newItemCursor = rssItemTable.fetchRow(databaseOpenHelper.getReadableDatabase(),
+                            newItemRowId);
                     newItemCursor.moveToFirst();
                     newItems.add(itemFromCursor(newItemCursor));
                     newItemCursor.close();
@@ -256,12 +288,12 @@ public class DataSource {
     }
 
 
-    static RssFeed feedFromCursor(Cursor cursor){
+    static RssFeed feedFromCursor(Cursor cursor) {
         return new RssFeed(Table.getRowId(cursor), RssFeedTable.getTitle(cursor), RssFeedTable.getDescription(cursor),
                 RssFeedTable.getSiteURL(cursor), RssFeedTable.getFeedURL(cursor));
     }
 
-    static RssItem itemFromCursor(Cursor cursor){
+    static RssItem itemFromCursor(Cursor cursor) {
         return new RssItem(Table.getRowId(cursor), RssItemTable.getGUID(cursor), RssItemTable.getTitle(cursor),
                 RssItemTable.getDescription(cursor), RssItemTable.getLink(cursor),
                 RssItemTable.getEnclosure(cursor), RssItemTable.getRssFeedId(cursor),
@@ -269,14 +301,15 @@ public class DataSource {
                 RssItemTable.getArchived(cursor));
     }
 
-    void submitTask(Runnable task){
-        if(executorService.isShutdown() || executorService.isTerminated()){
+    void submitTask(Runnable task) {
+        if (executorService.isShutdown() || executorService.isTerminated()) {
             executorService = Executors.newSingleThreadExecutor();
         }
         executorService.submit(task);
     }
 
-    boolean checkForError(GetFeedsNetworkRequest getFeedsNetworkRequest, Handler callbackThreadHandler, final Callback<?> callback) {
+    boolean checkForError(GetFeedsNetworkRequest getFeedsNetworkRequest, Handler callbackThreadHandler, final
+    Callback<?> callback) {
         if (getFeedsNetworkRequest.getErrorCode() != 0) {
             final String errorMessage;
             if (getFeedsNetworkRequest.getErrorCode() == NetworkRequest.ERROR_IO) {

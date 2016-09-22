@@ -27,6 +27,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.ui.UIUtils;
 import io.bloc.android.blocly.api.model.RssFeed;
@@ -48,7 +49,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         public void onVisitClicked(ItemAdapter itemAdapter, RssItem rssItem);
     }
 
-    private static String TAG = ItemAdapter.class.getSimpleName();
+    private static String TAG = "yanstag";
     private Map<Long, Integer> rssFeedToColor = new HashMap<>();
     private RssItem expandedItem = null;
 
@@ -242,7 +243,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            Log.v(TAG, "Checked changed to: " + isChecked);
+            if(buttonView.getId() == R.id.cb_rss_item_favorite_star){
+                Log.v(TAG, "Clicked on favorite..");
+                Log.v(TAG, "RSS Item guid: " + rssItem.getGuid());
+                int checked = isChecked ? 1 : 0;
+                BloclyApplication.getSharedDataSource().updateFavorite(checked, rssItem.getGuid());
+            }
+
         }
 
         private void animateContent(final boolean expand) {

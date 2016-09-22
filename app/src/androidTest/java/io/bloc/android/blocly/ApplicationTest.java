@@ -33,4 +33,5 @@ public class ApplicationTest extends ApplicationTestCase<BloclyApplication> {
         application.onCreate();
         assertTrue(ImageLoader.getInstance().isInited());
     }
+
 }
